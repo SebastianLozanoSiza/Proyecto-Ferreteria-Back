@@ -24,6 +24,6 @@ public class Sucursal {
     private Long idSucursal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ferreteria_id", nullable = false)
+    @JoinColumn(name = "id_ferreteria", nullable = false)
     private Ferreteria ferreteria;
 }
