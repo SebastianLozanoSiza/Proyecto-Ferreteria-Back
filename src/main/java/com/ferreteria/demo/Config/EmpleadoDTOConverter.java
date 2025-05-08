@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ferreteria.demo.DTO.Empleado.ConvertirClienteAEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.CrearEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.EmpleadoDTO;
 import com.ferreteria.demo.Repositories.RepositoryCredenciales;
@@ -67,5 +68,19 @@ public class EmpleadoDTOConverter {
             empleadoDTO.setRazonSocial(empleado.getFerreteria().getRazonSocial());
         }
         return empleadoDTO;
+    }
+
+    public ConvertirClienteAEmpleadoDTO convertToConvertirDTO(Empleado empleado) {
+        ConvertirClienteAEmpleadoDTO convertirClienteAEmpleadoDTO = dbm.map(empleado, ConvertirClienteAEmpleadoDTO.class);
+        if (empleado.getTercero() != null) {
+            convertirClienteAEmpleadoDTO.setIdTercero(empleado.getTercero().getIdTercero());
+        }
+        if (empleado.getRol() != null) {
+            convertirClienteAEmpleadoDTO.setIdRol(empleado.getRol().getIdRol());
+        }
+        if (empleado.getFerreteria() != null) {
+            convertirClienteAEmpleadoDTO.setIdFerreteria(empleado.getFerreteria().getIdFerreteria());
+        }
+        return convertirClienteAEmpleadoDTO;
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ferreteria.demo.DTO.RespuestaDTO;
+import com.ferreteria.demo.DTO.Empleado.ConvertirClienteAEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.CrearEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.ListarEmpleadoDTO;
 import com.ferreteria.demo.Services.ServiceEmpleado;
@@ -70,6 +71,30 @@ public class EmpleadoController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(
                     new RespuestaDTO(true, "400", "Error al registrar usuario: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/convertirClienteAEmpleado")
+    public ResponseEntity<RespuestaDTO> convertirClienteAEmpleado(
+            @Valid @RequestBody ConvertirClienteAEmpleadoDTO convertirClienteAEmpleadoDTO, BindingResult result) {
+
+        // Validar si hay errores en los campos
+        if (result.hasErrors()) {
+            List<String> errores = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest()
+                    .body(new RespuestaDTO(true, "400", "Error: " + String.join(", ", errores)));
+        }
+
+        try {
+            serviceEmpleado.convertir(convertirClienteAEmpleadoDTO);
+            return ResponseEntity.ok(new RespuestaDTO(false, "200", "Cliente convertido a empleado correctamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new RespuestaDTO(true, "400", "Error: " + e.getMessage()));
         }
     }
 

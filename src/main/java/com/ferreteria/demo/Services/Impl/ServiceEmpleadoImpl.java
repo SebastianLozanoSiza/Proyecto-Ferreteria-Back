@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ferreteria.demo.Config.EmpleadoDTOConverter;
+import com.ferreteria.demo.DTO.Empleado.ConvertirClienteAEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.CrearEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.EmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.ListarEmpleadoDTO;
@@ -154,6 +155,36 @@ public class ServiceEmpleadoImpl implements ServiceEmpleado {
     public void delete(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    }
+
+    @Override
+    public ConvertirClienteAEmpleadoDTO convertir(ConvertirClienteAEmpleadoDTO convertirClienteAEmpleadoDTO) {
+        // Verificar si el cliente (Tercero) existe
+        Tercero tercero = repositoryTercero.findById(convertirClienteAEmpleadoDTO.getIdTercero())
+                .orElseThrow(() -> new RuntimeException("Cliente (Tercero) no encontrado"));
+
+        // Verificar si ya es un empleado
+        if (repositoryEmpleado.findByTercero(tercero).isPresent()) {
+            throw new RuntimeException("El cliente ya está registrado como empleado.");
+        }
+
+        // Verificar si el rol existe
+        Rol rol = repositoryRol.findById(convertirClienteAEmpleadoDTO.getIdRol())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        // Verificar si la ferretería existe
+        Ferreteria ferreteria = repositoryFerreteria.findById(convertirClienteAEmpleadoDTO.getIdFerreteria())
+                .orElseThrow(() -> new RuntimeException("Ferretería no encontrada"));
+
+        // Crear el empleado
+        Empleado empleado = new Empleado();
+        empleado.setTercero(tercero);
+        empleado.setRol(rol);
+        empleado.setFerreteria(ferreteria);
+        Empleado empleadoSaved = repositoryEmpleado.save(empleado);
+
+        // Convertir a DTO y retornar
+        return convert.convertToConvertirDTO(empleadoSaved);
     }
 
 }
