@@ -9,4 +9,7 @@ import com.ferreteria.demo.Repositories.Entities.Credenciales;
 public interface RepositoryCredenciales extends CrudRepository<Credenciales,Long>{
     
     Optional<Credenciales> findByNombreUsuario(String nombreUsuario);
+    
+    Optional<Credenciales> findByTercero_IdTercero(Long idTercero);
+
 }
