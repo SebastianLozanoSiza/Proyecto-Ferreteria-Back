@@ -37,9 +37,16 @@ public class SecurityConfig {
 
                 // Solo empleados y administradores pueden ver departamentos
                 .requestMatchers(HttpMethod.GET, "/departamentos/**").hasAnyAuthority("Empleado", "Administrador")
+                // Solo clientes pueden listar productos
+                .requestMatchers(HttpMethod.GET, "/productos/listarProductos").hasAnyAuthority("CLIENTE", "Administrador")
+
+                // Solo administradores pueden crear, actualizar y eliminar productos
+                .requestMatchers(HttpMethod.POST, "/productos/**").hasAuthority("Administrador")
+                .requestMatchers(HttpMethod.PUT, "/productos/**").hasAuthority("Administrador")
+                .requestMatchers(HttpMethod.DELETE, "/productos/**").hasAuthority("Administrador")
 
                 // Solo administradores pueden crear departamentos
-                .requestMatchers(HttpMethod.POST, "/departamentos/**").hasRole("Administrador")
+                .requestMatchers(HttpMethod.POST, "/departamentos/**").hasAuthority("Administrador")
 
                 .requestMatchers(SWAGGER_WHILELIST).permitAll()
                 // Bloquear cualquier otro acceso

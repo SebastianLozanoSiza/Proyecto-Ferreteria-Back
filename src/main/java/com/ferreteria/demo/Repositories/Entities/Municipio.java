@@ -17,7 +17,7 @@ public class Municipio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idMunicipio;
+    private Long idMunicipio;
 
     @Column(nullable = false, unique = true)
     private String nombre;

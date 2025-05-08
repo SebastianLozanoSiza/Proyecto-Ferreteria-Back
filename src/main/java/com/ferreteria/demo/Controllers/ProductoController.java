@@ -1,6 +1,16 @@
 package com.ferreteria.demo.Controllers;
 
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ferreteria.demo.DTO.RespuestaDTO;
+import com.ferreteria.demo.DTO.Producto.CrearProductoDTO;
+import com.ferreteria.demo.DTO.Producto.ListarProductoDTO;
+import com.ferreteria.demo.Services.ServiceProducto;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataAccessException;
@@ -11,58 +21,41 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.ferreteria.demo.DTO.RespuestaDTO;
-import com.ferreteria.demo.DTO.Departamento.DepartamentoDTO;
-import com.ferreteria.demo.DTO.Departamento.ListarDepartamentoDTO;
-import com.ferreteria.demo.Services.ServiceDepartamento;
-
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/departamentos")
-public class DepartamentoController {
+@RequestMapping("/productos")
+public class ProductoController {
 
-    private ServiceDepartamento serviceDepartamento;
+    private ServiceProducto serviceProducto;
 
-    @GetMapping("/listarDepartamentos")
-    public ResponseEntity<ListarDepartamentoDTO> findAll(@RequestParam(required = false) String nombre) {
+    @GetMapping("/listarProductos")
+    public ResponseEntity<ListarProductoDTO> findAll(@RequestParam(required = false) String nombreProducto,
+            @RequestParam(required = false) String categoria, @RequestParam(required = false) String razonSocial) {
+
         try {
-            ListarDepartamentoDTO response = serviceDepartamento.findAll(nombre);
-
-            if (response.getDepartamentos() == null || response.getDepartamentos().isEmpty()) {
-                response.setRespuesta(new RespuestaDTO(true, "204", "No hay departamentos registrados"));
-                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
-            }
-
-            response.setRespuesta(new RespuestaDTO(false, "200", "Departamentos listados correctamente"));
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
+            ListarProductoDTO listarProductoDTO = serviceProducto.findAll(nombreProducto, categoria, razonSocial);
+            listarProductoDTO.setRespuesta(new RespuestaDTO(false, "200", "Productos listados correctamente"));
+            return new ResponseEntity<>(listarProductoDTO, HttpStatus.OK);
         } catch (DataAccessException e) {
-            ListarDepartamentoDTO response = new ListarDepartamentoDTO();
-            response.setRespuesta(new RespuestaDTO(true, "500",
+            ListarProductoDTO listarProductoDTO = new ListarProductoDTO();
+            listarProductoDTO.setRespuesta(new RespuestaDTO(true, "500",
                     "Error en la base de datos: " + e.getMostSpecificCause().getMessage()));
-            response.setDepartamentos(List.of());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-
+            return new ResponseEntity<>(listarProductoDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            ListarDepartamentoDTO response = new ListarDepartamentoDTO();
-            response.setRespuesta(new RespuestaDTO(true, "500", "Error inesperado: " + e.getMessage()));
-            response.setDepartamentos(List.of());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            ListarProductoDTO listarProductoDTO = new ListarProductoDTO();
+            listarProductoDTO.setRespuesta(new RespuestaDTO(true, "500", "Error inesperado: " + e.getMessage()));
+            return new ResponseEntity<>(listarProductoDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/crearDepartamento")
-    public ResponseEntity<RespuestaDTO> save(@Valid @RequestBody DepartamentoDTO departamentoDTO,
+    @PostMapping("/crearProductos")
+    public ResponseEntity<RespuestaDTO> save(@Valid @RequestBody CrearProductoDTO crearProductoDTO,
             BindingResult result) {
         if (result.hasErrors()) {
             String errores = result.getFieldErrors()
@@ -75,9 +68,9 @@ public class DepartamentoController {
         }
 
         try {
-            serviceDepartamento.save(departamentoDTO);
+            serviceProducto.save(crearProductoDTO);
             return ResponseEntity.ok(
-                    new RespuestaDTO(false, "200", "Departamento creado exitosamente"));
+                    new RespuestaDTO(false, "200", "Producto creado exitosamente"));
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.badRequest().body(
                     new RespuestaDTO(true, "400", e.getMessage()));
@@ -88,8 +81,8 @@ public class DepartamentoController {
         }
     }
 
-    @PutMapping("/actualizarDepartamento")
-    public ResponseEntity<RespuestaDTO> update(@Valid @RequestBody DepartamentoDTO departamentoDTO,
+    @PutMapping("/actualizarProducto")
+    public ResponseEntity<RespuestaDTO> update(@Valid @RequestBody CrearProductoDTO crearProductoDTO,
             BindingResult result, @RequestParam Long id) {
         if (result.hasErrors()) {
             String errores = result.getFieldErrors()
@@ -102,9 +95,9 @@ public class DepartamentoController {
         }
 
         try {
-            serviceDepartamento.update(id, departamentoDTO);
+            serviceProducto.update(id, crearProductoDTO);
             return ResponseEntity.ok(
-                    new RespuestaDTO(false, "200", "Departamento actualizado exitosamente"));
+                    new RespuestaDTO(false, "200", "Prducto actualizado exitosamente"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
                     new RespuestaDTO(true, "400", "Error: " + e.getMessage()));
@@ -118,19 +111,20 @@ public class DepartamentoController {
         }
     }
 
-    @DeleteMapping("/eliminarDepartamento/{id}")
-    public ResponseEntity<RespuestaDTO> delete(@RequestParam Long id) {
+    @DeleteMapping("/eliminarProducto/{id}")
+    public ResponseEntity<RespuestaDTO> delete(@PathVariable Long id) {
         try {
-            serviceDepartamento.delete(id);
+            serviceProducto.delete(id);
             return ResponseEntity.ok(
-                    new RespuestaDTO(false, "200", "Departamento eliminado exitosamente"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new RespuestaDTO(true, "404", e.getMessage()));
+                    new RespuestaDTO(false, "200", "Producto eliminado exitosamente"));
         } catch (DataAccessException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new RespuestaDTO(true, "500",
                             "Error en la base de datos: " + e.getMostSpecificCause().getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new RespuestaDTO(true, "500", "Error inesperado: " + e.getMessage()));
         }
     }
+
 }

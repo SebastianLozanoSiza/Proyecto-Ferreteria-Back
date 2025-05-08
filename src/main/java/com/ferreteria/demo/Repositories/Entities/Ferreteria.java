@@ -21,7 +21,7 @@ public class Ferreteria {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idFerreteria;
+    private Long idFerreteria;
 
     @NotBlank(message = "El NIT no puede estar vacío")
     @Column(nullable = false, unique = true)

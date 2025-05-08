@@ -15,7 +15,7 @@ public class Departamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idDepartamento;
+    private Long idDepartamento;
 
     @Column(nullable = false, unique = true)
     private String nombre;

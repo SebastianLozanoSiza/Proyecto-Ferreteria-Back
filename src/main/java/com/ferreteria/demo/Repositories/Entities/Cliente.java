@@ -17,7 +17,7 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCliente;
+    private Long idCliente;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tercero", nullable = false)

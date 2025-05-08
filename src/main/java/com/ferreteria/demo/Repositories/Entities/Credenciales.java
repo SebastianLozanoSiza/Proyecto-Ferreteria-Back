@@ -23,7 +23,7 @@ public class Credenciales {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCredencial;
+    private Long idCredencial;
 
     @NotBlank(message = "El nombre de usuario no puede estar vacío")
     @Column(nullable = false, unique = true)

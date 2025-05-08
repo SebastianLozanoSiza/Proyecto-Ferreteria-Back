@@ -18,7 +18,7 @@ public class Barrio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idBarrio;
+    private Long idBarrio;
 
     @Column(nullable = false)
     private String nombre;

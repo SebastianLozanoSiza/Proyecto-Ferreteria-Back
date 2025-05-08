@@ -16,7 +16,7 @@ public class Tercero {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idTercero;
+    private Long idTercero;
 
     @NotBlank(message = "La identificación no puede estar vacía")
     @Column(nullable = false, unique = true, length = 50)

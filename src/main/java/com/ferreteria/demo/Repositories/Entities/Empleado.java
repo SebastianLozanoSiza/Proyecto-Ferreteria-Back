@@ -17,7 +17,7 @@ public class Empleado {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "id_tercero", nullable = false)

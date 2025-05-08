@@ -1,25 +1,12 @@
-package com.ferreteria.demo.Repositories.Entities;
+package com.ferreteria.demo.DTO.Producto;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-@Entity
-@Table(name = "productos")
-public class Producto {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idProducto;
+public class CrearProductoDTO {
 
     @NotBlank(message = "El nombre del producto no puede estar vacío")
     @Column(nullable = false, unique = true)
@@ -39,7 +26,7 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ferreteria", nullable = false)
-    private Ferreteria ferreteria;
+    @NotNull(message = "El id de la ferreteria no puede ser nulo")
+    @Column(nullable = false)
+    private Long idFerreteria;
 }
