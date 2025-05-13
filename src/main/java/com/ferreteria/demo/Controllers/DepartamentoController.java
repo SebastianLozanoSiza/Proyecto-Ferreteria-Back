@@ -39,8 +39,9 @@ public class DepartamentoController {
             ListarDepartamentoDTO response = serviceDepartamento.findAll(nombre);
 
             if (response.getDepartamentos() == null || response.getDepartamentos().isEmpty()) {
-                response.setRespuesta(new RespuestaDTO(true, "204", "No hay departamentos registrados"));
-                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+                response.setDepartamentos(null);
+                response.setRespuesta(new RespuestaDTO(true, "200", "No hay departamentos registrados"));
+                return new ResponseEntity<>(response, HttpStatus.OK);
             }
 
             response.setRespuesta(new RespuestaDTO(false, "200", "Departamentos listados correctamente"));

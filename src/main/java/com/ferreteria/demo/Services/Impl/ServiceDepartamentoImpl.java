@@ -35,6 +35,12 @@ public class ServiceDepartamentoImpl implements ServiceDepartamento {
                     .filter(dep -> dep.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                     .collect(Collectors.toList());
         }
+
+        // Si no hay coincidencias, devolver una lista vacía
+        if (departamentos.isEmpty()) {
+            return new ListarDepartamentoDTO(); // Lista vacía
+        }
+        
         return convert.convertListarToDTO(departamentos);
 
     }
@@ -73,7 +79,7 @@ public class ServiceDepartamentoImpl implements ServiceDepartamento {
         Optional<Departamento> departamentOptional = repositoryDepartamento.findById(id);
         if (departamentOptional.isPresent()) {
             repositoryDepartamento.delete(departamentOptional.get());
-        }else {
+        } else {
             throw new IllegalArgumentException("El departamento con ID " + id + " no existe.");
         }
     }

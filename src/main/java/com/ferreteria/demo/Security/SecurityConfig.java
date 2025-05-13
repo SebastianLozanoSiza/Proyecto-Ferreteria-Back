@@ -35,6 +35,7 @@ public class SecurityConfig {
                 // Permitir acceso al login sin autenticación
                 .requestMatchers("/login/**", "/registrarNuevo/**").permitAll()
                 .requestMatchers("/empleados/**").hasAuthority("Administrador")
+                .requestMatchers("/ferreterias/**").hasAuthority("Administrador")
 
                 // Solo empleados y administradores pueden ver departamentos
                 .requestMatchers(HttpMethod.GET, "/departamentos/**").hasAnyAuthority("Empleado", "Administrador")

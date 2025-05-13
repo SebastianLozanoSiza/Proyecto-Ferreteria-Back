@@ -67,10 +67,10 @@ public class EmpleadoController {
         try {
             serviceEmpleado.save(crearEmpleadoDTO);
             return ResponseEntity
-                    .ok(new RespuestaDTO(false, "200", "Usuario registrado correctamente"));
+                    .ok(new RespuestaDTO(false, "200", "Empleado registrado correctamente"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(
-                    new RespuestaDTO(true, "400", "Error al registrar usuario: " + e.getMessage()));
+                    new RespuestaDTO(true, "400", "Error al registrar el empleado: " + e.getMessage()));
         }
     }
 

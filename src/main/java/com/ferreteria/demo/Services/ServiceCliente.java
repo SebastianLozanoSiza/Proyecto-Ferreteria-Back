@@ -1,5 +1,8 @@
 package com.ferreteria.demo.Services;
 
-public class ServiceCliente {
+import com.ferreteria.demo.DTO.Cliente.ListarClienteDTO;
+
+public interface ServiceCliente {
     
+    ListarClienteDTO findAll();
 }
