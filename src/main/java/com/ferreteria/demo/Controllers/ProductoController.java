@@ -100,7 +100,7 @@ public class ProductoController {
         try {
             serviceProducto.update(id, crearProductoDTO);
             return ResponseEntity.ok(
-                    new RespuestaDTO(false, "200", "Prducto actualizado exitosamente"));
+                    new RespuestaDTO(false, "200", "Producto actualizado exitosamente"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
                     new RespuestaDTO(true, "400", "Error: " + e.getMessage()));

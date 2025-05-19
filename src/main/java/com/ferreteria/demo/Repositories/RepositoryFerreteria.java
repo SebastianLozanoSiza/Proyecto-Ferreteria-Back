@@ -6,4 +6,5 @@ import com.ferreteria.demo.Repositories.Entities.Ferreteria;
 
 public interface RepositoryFerreteria extends CrudRepository<Ferreteria, Long> {
 
+        boolean existsByRazonSocial(String razonSocial);
 }
