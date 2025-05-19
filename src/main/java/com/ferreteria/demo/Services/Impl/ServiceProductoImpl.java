@@ -74,6 +74,10 @@ public class ServiceProductoImpl implements ServiceProducto {
                         throw new IllegalArgumentException("El nombre del producto ya está en uso");
                 }
 
+                if (repositoryProducto.existsByCategoria(crearProductoDTO.getCategoria())) {
+                        throw new IllegalArgumentException("El nombre de la categoría ya está en uso");
+                }
+
                 // Convertir el DTO a entidad
                 Producto producto = convert.convertToEntity(crearProductoDTO);
 
@@ -105,13 +109,13 @@ public class ServiceProductoImpl implements ServiceProducto {
                                                         .equals(crearProductoDTO.getNombreProducto())) {
                                 throw new IllegalArgumentException("El nombre del producto ya está en uso");
                         }
-                        
+
                         productoCurrent.setNombreProducto(crearProductoDTO.getNombreProducto());
                         productoCurrent.setDescripcion(crearProductoDTO.getDescripcion());
                         productoCurrent.setCategoria(crearProductoDTO.getCategoria());
                         productoCurrent.setPrecio(crearProductoDTO.getPrecio());
                         productoCurrent.setStock(crearProductoDTO.getStock());
-                        
+
                         // Buscar la ferretería asociada al producto
                         Ferreteria ferreteria = repositoryFerreteria.findById(crearProductoDTO.getIdFerreteria())
                                         .orElseThrow(() -> new IllegalArgumentException(

@@ -71,6 +71,9 @@ public class ProductoController {
             serviceProducto.save(crearProductoDTO);
             return ResponseEntity.ok(
                     new RespuestaDTO(false, "200", "Producto creado exitosamente"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    new RespuestaDTO(true, "400", "Error: " + e.getMessage()));
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.badRequest().body(
                     new RespuestaDTO(true, "400", e.getMessage()));
