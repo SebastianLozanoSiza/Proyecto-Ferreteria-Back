@@ -20,6 +20,7 @@ public class ClienteConverterDTO {
     public ClienteDTO convertToListarDTO(Cliente cliente){
         ClienteDTO clienteDTO = dbm.map(cliente, ClienteDTO.class);
         if (cliente.getTercero() != null) {
+            clienteDTO.setIdTercero(cliente.getTercero().getIdTercero());
             clienteDTO.setIdentificacion(cliente.getTercero().getIdentificacion());
             clienteDTO.setNombre(cliente.getTercero().getNombre());
             clienteDTO.setApellidos(cliente.getTercero().getApellidos());

@@ -2,6 +2,7 @@ package com.ferreteria.demo.Services.Impl;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ferreteria.demo.Config.CredencialesDTOConverter;
 import com.ferreteria.demo.Config.EmpleadoDTOConverter;
 import com.ferreteria.demo.DTO.Empleado.ConvertirClienteAEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.CrearEmpleadoDTO;
+import com.ferreteria.demo.DTO.Empleado.EditarEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.EmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.ListarEmpleadoDTO;
 import com.ferreteria.demo.Repositories.RepositoryCredenciales;
@@ -54,6 +57,9 @@ public class ServiceEmpleadoImpl implements ServiceEmpleado {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CredencialesDTOConverter credencialesDTOConverter;
 
     @Override
     public ListarEmpleadoDTO findAll() {
@@ -146,15 +152,73 @@ public class ServiceEmpleadoImpl implements ServiceEmpleado {
     }
 
     @Override
-    public CrearEmpleadoDTO update(Long id, CrearEmpleadoDTO crearEmpleadoDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public EditarEmpleadoDTO update(Long id, EditarEmpleadoDTO editarEmpleadoDTO) {
+        Optional<Empleado> empleadoCuurentOptional = repositoryEmpleado.findById(id);
+        if (empleadoCuurentOptional.isPresent()) {
+            Empleado empleadoCurrent = empleadoCuurentOptional.get();
+            Tercero tercero = empleadoCurrent.getTercero();
+
+            if (repositoryTercero.existsByIdentificacion(editarEmpleadoDTO.getIdentificacion())) {
+                throw new IllegalArgumentException(
+                        "La identificación: " + editarEmpleadoDTO.getIdentificacion() + " ya está registrada.");
+            }
+
+            if (!tercero.getCorreo().equals(editarEmpleadoDTO.getCorreo()) &&
+                    repositoryTercero.existsByCorreo(editarEmpleadoDTO.getCorreo())) {
+                throw new IllegalArgumentException("El correo: " + editarEmpleadoDTO.getCorreo() + " ya está en uso");
+            }
+
+            if (!tercero.getTelefono().equals(editarEmpleadoDTO.getTelefono()) &&
+                    repositoryTercero.existsByTelefono(editarEmpleadoDTO.getTelefono())) {
+                throw new IllegalArgumentException(
+                        "El teléfono: " + editarEmpleadoDTO.getTelefono() + " ya está en uso");
+            }
+
+            tercero.setIdentificacion(editarEmpleadoDTO.getIdentificacion());
+            tercero.setNombre(editarEmpleadoDTO.getNombre());
+            tercero.setApellidos(editarEmpleadoDTO.getApellidos());
+            tercero.setCorreo(editarEmpleadoDTO.getCorreo());
+            tercero.setDireccion(editarEmpleadoDTO.getDireccion());
+            tercero.setTelefono(editarEmpleadoDTO.getTelefono());
+            repositoryTercero.save(tercero);
+
+            Credenciales credenciales = repositoryCredenciales.findByTercero_IdTercero(tercero.getIdTercero())
+                    .orElseThrow(() -> new IllegalArgumentException("No se encontraron credenciales para el cliente."));
+
+            if (!credenciales.getNombreUsuario().equals(editarEmpleadoDTO.getApellidos()) &&
+                    repositoryCredenciales.findByNombreUsuario(editarEmpleadoDTO.getNombreUsuario()).isPresent()) {
+                throw new IllegalArgumentException(
+                        "El nombre de usuario: " + editarEmpleadoDTO.getNombreUsuario() + " ya está en uso");
+            }
+
+            credenciales.setNombreUsuario(editarEmpleadoDTO.getNombreUsuario());
+
+            if (editarEmpleadoDTO.getContrasena() != null && !editarEmpleadoDTO.getContrasena().isBlank()) {
+                String encryptedPassword = passwordEncoder.encode(editarEmpleadoDTO.getContrasena());
+                credenciales.setContrasena(encryptedPassword);
+            }
+
+            repositoryCredenciales.save(credenciales);
+
+            return credencialesDTOConverter.convertToDTOEditar(credenciales);
+        }
+        throw new IllegalArgumentException("El empleado con ID " + id + " no existe.");
     }
 
     @Override
     public void delete(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        Optional<Empleado> empleadoOptional = repositoryEmpleado.findById(id);
+        if (empleadoOptional.isEmpty()) {
+            throw new IllegalArgumentException("El empleado con ID " + id + " no existe.");
+        }
+
+        Empleado empleado = empleadoOptional.get();
+        Tercero tercero = empleado.getTercero();
+        repositoryCredenciales.findByTercero_IdTercero(tercero.getIdTercero())
+                .ifPresent(repositoryCredenciales::delete);
+
+        repositoryEmpleado.delete(empleado);
+        repositoryTercero.delete(tercero);
     }
 
     @Override

@@ -71,7 +71,8 @@ public class EmpleadoDTOConverter {
     }
 
     public ConvertirClienteAEmpleadoDTO convertToConvertirDTO(Empleado empleado) {
-        ConvertirClienteAEmpleadoDTO convertirClienteAEmpleadoDTO = dbm.map(empleado, ConvertirClienteAEmpleadoDTO.class);
+        ConvertirClienteAEmpleadoDTO convertirClienteAEmpleadoDTO = dbm.map(empleado,
+                ConvertirClienteAEmpleadoDTO.class);
         if (empleado.getTercero() != null) {
             convertirClienteAEmpleadoDTO.setIdTercero(empleado.getTercero().getIdTercero());
         }

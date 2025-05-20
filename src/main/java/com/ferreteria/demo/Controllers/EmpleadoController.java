@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ferreteria.demo.DTO.RespuestaDTO;
 import com.ferreteria.demo.DTO.Empleado.ConvertirClienteAEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.CrearEmpleadoDTO;
+import com.ferreteria.demo.DTO.Empleado.EditarEmpleadoDTO;
 import com.ferreteria.demo.DTO.Empleado.ListarEmpleadoDTO;
 import com.ferreteria.demo.Services.ServiceEmpleado;
 
@@ -20,8 +21,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -71,6 +75,49 @@ public class EmpleadoController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(
                     new RespuestaDTO(true, "400", "Error al registrar el empleado: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/actualizarEmpleado/{id}")
+    public ResponseEntity<RespuestaDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody EditarEmpleadoDTO editarEmpleadoDTO,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            String errores = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(
+                    new RespuestaDTO(true, "400", "Error: " + errores));
+        }
+
+        try {
+            serviceEmpleado.update(id, editarEmpleadoDTO);
+            return ResponseEntity.ok(
+                    new RespuestaDTO(false, "200", "Empleado actualizado correctamente"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    new RespuestaDTO(true, "400", "Error: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new RespuestaDTO(true, "500", "Error inesperado: " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/eliminarEmpleado/{id}")
+    public ResponseEntity<RespuestaDTO> delete(@PathVariable Long id) {
+        try {
+            serviceEmpleado.delete(id);
+            return ResponseEntity.ok(
+                    new RespuestaDTO(false, "200", "Empleado eliminado correctamente"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    new RespuestaDTO(true, "400", "Error: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new RespuestaDTO(true, "500", "Error inesperado: " + e.getMessage()));
         }
     }
 

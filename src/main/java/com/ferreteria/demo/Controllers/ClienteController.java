@@ -49,7 +49,7 @@ public class ClienteController {
     }
 
     @PutMapping("/actualizarCliente/{id}")
-    public ResponseEntity<RespuestaDTO> updateCliente(
+    public ResponseEntity<RespuestaDTO> update(
             @PathVariable Long id,
             @Valid @RequestBody UsuarioDTO usuarioDTO,
             BindingResult result) {
@@ -77,7 +77,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/eliminarCliente/{id}")
-    public ResponseEntity<RespuestaDTO> deleteCliente(@PathVariable Long id) {
+    public ResponseEntity<RespuestaDTO> delete(@PathVariable Long id) {
         try {
             serviceCliente.delete(id);
             return ResponseEntity.ok(

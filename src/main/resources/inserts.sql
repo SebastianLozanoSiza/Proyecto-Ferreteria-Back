@@ -45,9 +45,9 @@ INSERT INTO Clientes (id_tercero) VALUES
 
 -- Insertar roles
 INSERT INTO Roles (nombre_rol) VALUES
-('Administrador'),
-('Vendedor'),
-('Cajero');
+('Superadmin'),
+('Admin'),
+('Supervisor');
 
 -- Insertar empleados
 INSERT INTO Empleados (id_tercero, id_rol, id_ferreteria) VALUES
@@ -56,8 +56,8 @@ INSERT INTO Empleados (id_tercero, id_rol, id_ferreteria) VALUES
 
 -- Insertar credenciales para los empleados
 INSERT INTO Credenciales (nombre_usuario, contrasena, id_tercero) VALUES
-('admin1', '$2a$10$pNkUFTtHp5WcXactPUDOFuGRVL/eHJ09C6UYlirNnnFIbfTeZ5H2G', 3),
-('vendedor2', '$2a$10$pNkUFTtHp5WcXactPUDOFuGRVL/eHJ09C6UYlirNnnFIbfTeZ5H2G', 4);
+('superadmin1', '$2a$10$pNkUFTtHp5WcXactPUDOFuGRVL/eHJ09C6UYlirNnnFIbfTeZ5H2G', 3),
+('admin1', '$2a$10$pNkUFTtHp5WcXactPUDOFuGRVL/eHJ09C6UYlirNnnFIbfTeZ5H2G', 4);
 
 -- Insertar productos
 INSERT INTO Productos (nombre_producto, descripcion, categoria, precio, stock, id_ferreteria) VALUES

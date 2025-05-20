@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class ClienteDTO {
     
+    private Long idTercero;
     private Long idCliente;
     private String identificacion;
     private String nombre;

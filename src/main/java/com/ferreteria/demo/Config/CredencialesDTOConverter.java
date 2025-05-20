@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 
+import com.ferreteria.demo.DTO.Empleado.EditarEmpleadoDTO;
 import com.ferreteria.demo.DTO.Usuario.UsuarioDTO;
 import com.ferreteria.demo.Repositories.Entities.Credenciales;
 
@@ -19,6 +20,19 @@ public class CredencialesDTOConverter {
 
     public UsuarioDTO convertToDTO(Credenciales credenciales) {
         UsuarioDTO usuarioDTO = dbm.map(credenciales, UsuarioDTO.class);
+        if (credenciales.getTercero() !=null) {
+            usuarioDTO.setIdentificacion(credenciales.getTercero().getIdentificacion());
+            usuarioDTO.setNombre(credenciales.getTercero().getNombre());
+            usuarioDTO.setApellidos(credenciales.getTercero().getApellidos());
+            usuarioDTO.setCorreo(credenciales.getTercero().getCorreo());
+            usuarioDTO.setDireccion(credenciales.getTercero().getDireccion());
+            usuarioDTO.setTelefono(credenciales.getTercero().getTelefono());
+        }
+        return usuarioDTO;
+    }
+
+    public EditarEmpleadoDTO convertToDTOEditar(Credenciales credenciales) {
+        EditarEmpleadoDTO usuarioDTO = dbm.map(credenciales, EditarEmpleadoDTO.class);
         if (credenciales.getTercero() !=null) {
             usuarioDTO.setIdentificacion(credenciales.getTercero().getIdentificacion());
             usuarioDTO.setNombre(credenciales.getTercero().getNombre());

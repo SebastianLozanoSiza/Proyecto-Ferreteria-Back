@@ -62,6 +62,11 @@ public class ServiceClienteImpl implements ServiceCliente {
         if (clienteCurrentOptional.isPresent()) {
             Cliente clienteCurrent = clienteCurrentOptional.get();
             Tercero tercero = clienteCurrent.getTercero();
+
+            if (repositoryTercero.existsByIdentificacion(usuarioDTO.getIdentificacion())) {
+                throw new IllegalArgumentException("La identificación: " + usuarioDTO.getIdentificacion() +  " ya está registrada.");
+            }
+
             if (!tercero.getCorreo().equals(usuarioDTO.getCorreo()) &&
                     repositoryTercero.existsByCorreo(usuarioDTO.getCorreo())) {
                 throw new IllegalArgumentException("El correo: " + usuarioDTO.getCorreo() + " ya está en uso");
