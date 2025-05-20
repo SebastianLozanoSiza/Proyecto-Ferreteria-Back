@@ -7,4 +7,8 @@ import com.ferreteria.demo.Repositories.Entities.Tercero;
 public interface RepositoryTercero extends CrudRepository<Tercero,Long>{
     
     boolean existsByIdentificacion(String identificacion);
+
+    boolean existsByCorreo(String correo);
+
+    boolean existsByTelefono(String telefono);
 }

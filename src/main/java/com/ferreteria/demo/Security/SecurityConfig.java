@@ -32,15 +32,31 @@ public class SecurityConfig {
         requestHandler.setCsrfRequestAttributeName("_csrf");
         http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(auth -> auth
-                // Permitir acceso al login sin autenticación
+                // Permitir acceso al login y registro sin autenticación
                 .requestMatchers("/login/**", "/registrarNuevo/**").permitAll()
+
+                // El cliente solo puede actualizar sus datos
+                .requestMatchers(HttpMethod.PUT, "/clientes/**").hasAnyAuthority("CLIENTE", "Administrador", "Empleado")
+                // Administrador y empleado tienen acceso completo
+                .requestMatchers("/clientes/**").hasAnyAuthority("Administrador", "Empleado")
+                // Solo administradores pueden gestionar empleados
                 .requestMatchers("/empleados/**").hasAuthority("Administrador")
-                .requestMatchers("/ferreterias/**").hasAuthority("Administrador")
+
+                // Solo clientes pueden listar ferreterias
+                .requestMatchers(HttpMethod.GET, "/ferreterias/**")
+                .hasAnyAuthority("CLIENTE", "Empleado", "Administrador")
+
+                // Solo empleados y administradores pueden crear, editar y eliminar ferreterias
+                .requestMatchers(HttpMethod.POST, "/ferreterias/**").hasAnyAuthority("Empleado", "Administrador")
+                .requestMatchers(HttpMethod.PUT, "/ferreterias/**").hasAnyAuthority("Empleado", "Administrador")
+                .requestMatchers(HttpMethod.DELETE, "/ferreterias/**").hasAnyAuthority("Empleado", "Administrador")
 
                 // Solo empleados y administradores pueden ver departamentos
                 .requestMatchers(HttpMethod.GET, "/departamentos/**").hasAnyAuthority("Empleado", "Administrador")
-                // Solo clientes pueden listar productos
-                .requestMatchers(HttpMethod.GET, "/productos/listarProductos").hasAnyAuthority("CLIENTE", "Administrador")
+
+                // Solo clientes y administradores pueden listar productos
+                .requestMatchers(HttpMethod.GET, "/productos/listarProductos")
+                .hasAnyAuthority("CLIENTE", "Administrador")
 
                 // Solo administradores pueden crear, actualizar y eliminar productos
                 .requestMatchers(HttpMethod.POST, "/productos/**").hasAuthority("Administrador")
@@ -50,6 +66,7 @@ public class SecurityConfig {
                 // Solo administradores pueden crear departamentos
                 .requestMatchers(HttpMethod.POST, "/departamentos/**").hasAuthority("Administrador")
 
+                // Permitir acceso a Swagger sin autenticación
                 .requestMatchers(SWAGGER_WHILELIST).permitAll()
                 // Bloquear cualquier otro acceso
                 .anyRequest().authenticated()).addFilterAfter(jwtValidationFilter, BasicAuthenticationFilter.class);
