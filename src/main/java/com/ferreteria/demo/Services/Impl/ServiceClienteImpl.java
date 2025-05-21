@@ -57,14 +57,38 @@ public class ServiceClienteImpl implements ServiceCliente {
     }
 
     @Override
+    public ListarClienteDTO findByNombreUsuario(String nombreUsuario) {
+        Optional<Credenciales> credencialesOpt = repositoryCredenciales.findByNombreUsuario(nombreUsuario);
+
+        ListarClienteDTO listarClienteDTO = new ListarClienteDTO();
+
+        if (credencialesOpt.isPresent()) {
+            Credenciales credenciales = credencialesOpt.get();
+            Tercero tercero = credenciales.getTercero();
+            if (tercero != null) {
+                Optional<Cliente> clienteOpt = repositoryCliente.findByTercero(tercero);
+                if (clienteOpt.isPresent()) {
+                    ClienteDTO clienteDTO = convert.convertToListarDTO(clienteOpt.get());
+                    listarClienteDTO.setClientes(List.of(clienteDTO));
+                    return listarClienteDTO;
+                }
+            }
+        }
+        listarClienteDTO.setClientes(List.of());
+        return listarClienteDTO;
+    }
+
+    @Override
     public UsuarioDTO update(Long id, UsuarioDTO usuarioDTO) {
         Optional<Cliente> clienteCurrentOptional = repositoryCliente.findById(id);
         if (clienteCurrentOptional.isPresent()) {
             Cliente clienteCurrent = clienteCurrentOptional.get();
             Tercero tercero = clienteCurrent.getTercero();
 
-            if (repositoryTercero.existsByIdentificacion(usuarioDTO.getIdentificacion())) {
-                throw new IllegalArgumentException("La identificación: " + usuarioDTO.getIdentificacion() +  " ya está registrada.");
+            if (!tercero.getIdentificacion().equals(usuarioDTO.getIdentificacion()) &&
+                    repositoryTercero.existsByIdentificacion(usuarioDTO.getIdentificacion())) {
+                throw new IllegalArgumentException(
+                        "La identificación: " + usuarioDTO.getIdentificacion() + " ya está registrada.");
             }
 
             if (!tercero.getCorreo().equals(usuarioDTO.getCorreo()) &&

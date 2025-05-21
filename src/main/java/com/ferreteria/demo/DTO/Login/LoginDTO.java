@@ -11,4 +11,5 @@ public class LoginDTO {
 
     private RespuestaDTO respuesta;
     private String token;
+    private String nombreUsuario;
 }

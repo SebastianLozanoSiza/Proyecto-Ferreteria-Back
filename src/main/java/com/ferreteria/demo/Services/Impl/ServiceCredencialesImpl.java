@@ -1,5 +1,7 @@
 package com.ferreteria.demo.Services.Impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,11 @@ public class ServiceCredencialesImpl implements ServiceCredenciales {
 
         Credenciales savedNewUsuario = repositoryCredenciales.save(credenciales);
         return convert.convertToDTO(savedNewUsuario);
+    }
+
+    @Override
+    public Optional<Credenciales> findByNombreUsuario(String nombreUsuario) {
+        return repositoryCredenciales.findByNombreUsuario(nombreUsuario);
     }
 
 }

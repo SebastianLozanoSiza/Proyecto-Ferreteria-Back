@@ -1,0 +1,13 @@
+package com.ferreteria.demo.DTO.Tercero;
+
+import java.util.List;
+
+import com.ferreteria.demo.DTO.RespuestaDTO;
+
+import lombok.Data;
+
+@Data
+public class ListarTerceroDTO {
+    private RespuestaDTO respuesta;
+    private List<TerceroDTO> terceros;
+}

@@ -48,6 +48,24 @@ public class ClienteController {
         }
     }
 
+    @GetMapping("/buscarClientePorUsuario/{nombreUsuario}")
+    public ResponseEntity<ListarClienteDTO> findByNombreUsuario(@PathVariable String nombreUsuario) {
+        try {
+            ListarClienteDTO listarClienteDTO = serviceCliente.findByNombreUsuario(nombreUsuario);
+            listarClienteDTO.setRespuesta(new RespuestaDTO(false, "200", "Cliente encontrado"));
+            return new ResponseEntity<>(listarClienteDTO, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            ListarClienteDTO listarClienteDTO = new ListarClienteDTO();
+            listarClienteDTO.setRespuesta(new RespuestaDTO(true, "500",
+                    "Error en la base de datos: " + e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(listarClienteDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            ListarClienteDTO listarClienteDTO = new ListarClienteDTO();
+            listarClienteDTO.setRespuesta(new RespuestaDTO(true, "500", "Error inesperado: " + e.getMessage()));
+            return new ResponseEntity<>(listarClienteDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PutMapping("/actualizarCliente/{id}")
     public ResponseEntity<RespuestaDTO> update(
             @PathVariable Long id,

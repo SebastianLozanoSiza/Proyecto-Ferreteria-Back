@@ -7,6 +7,8 @@ public interface ServiceCliente {
     
     ListarClienteDTO findAll();
 
+    ListarClienteDTO findByNombreUsuario(String nombreUsuario);
+
     UsuarioDTO update(Long id, UsuarioDTO usuarioDTO);
 
     void delete(Long id);

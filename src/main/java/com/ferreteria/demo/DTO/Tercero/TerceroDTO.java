@@ -1,12 +1,11 @@
-package com.ferreteria.demo.DTO.Cliente;
+package com.ferreteria.demo.DTO.Tercero;
 
 import lombok.Data;
 
 @Data
-public class ClienteDTO {
+public class TerceroDTO {
     
     private Long idTercero;
-    private Long idCliente;
     private String identificacion;
     private String nombre;
     private String apellidos;
@@ -14,4 +13,5 @@ public class ClienteDTO {
     private String direccion;
     private String telefono;
     private String nombreUsuario;
+
 }

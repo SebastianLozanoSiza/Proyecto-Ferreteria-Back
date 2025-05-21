@@ -158,7 +158,8 @@ public class ServiceEmpleadoImpl implements ServiceEmpleado {
             Empleado empleadoCurrent = empleadoCuurentOptional.get();
             Tercero tercero = empleadoCurrent.getTercero();
 
-            if (repositoryTercero.existsByIdentificacion(editarEmpleadoDTO.getIdentificacion())) {
+            if (!tercero.getIdentificacion().equals(editarEmpleadoDTO.getIdentificacion()) &&
+                    repositoryTercero.existsByIdentificacion(editarEmpleadoDTO.getIdentificacion())) {
                 throw new IllegalArgumentException(
                         "La identificación: " + editarEmpleadoDTO.getIdentificacion() + " ya está registrada.");
             }

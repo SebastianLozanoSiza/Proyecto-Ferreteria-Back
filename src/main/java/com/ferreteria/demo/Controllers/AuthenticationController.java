@@ -35,18 +35,18 @@ public class AuthenticationController {
     private final JWTUserDetailService jwtUserDetailService;
     private final JWTService jwtService;
 
-
     @PostMapping("/login")
     public ResponseEntity<LoginDTO> postToken(@RequestBody JWTRequest request) {
         if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new LoginDTO(new RespuestaDTO(true, "400", "El campo 'Usuario' es obligatorio."),
-                            null));
+                            null, null));
         }
 
         if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new LoginDTO(new RespuestaDTO(true, "400", "El campo 'Contraseña' es obligatorio."), null));
+                    .body(new LoginDTO(new RespuestaDTO(true, "400", "El campo 'Contraseña' es obligatorio."), null,
+                            null));
         }
 
         try {
@@ -54,19 +54,25 @@ public class AuthenticationController {
             final var userDetails = jwtUserDetailService.loadUserByUsername(request.getUsername());
             final var token = jwtService.generateToken(userDetails);
 
-            return ResponseEntity.ok(new LoginDTO(new RespuestaDTO(false, "200", "Inicio se sesion exitoso"), token));
+            // Obtener el nombre del usuario desde las credenciales
+            String nombre = serviceCredenciales
+                    .findByNombreUsuario(request.getUsername())
+                    .map(cred -> cred.getNombreUsuario() != null ? cred.getNombreUsuario() : null)
+                    .orElse(null);
+            return ResponseEntity.ok(new LoginDTO(new RespuestaDTO(false, "200", "Inicio se sesion exitoso"), token, nombre));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new LoginDTO(new RespuestaDTO(true, "401",
-                            "Credenciales incorrectas. Verifica tu usuario y contraseña."), null));
+                            "Credenciales incorrectas. Verifica tu usuario y contraseña."), null, null));
         } catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new LoginDTO(
-                            new RespuestaDTO(true, "401", "Cuenta deshabilitada. Contacta al administrador."), null));
+                            new RespuestaDTO(true, "401", "Cuenta deshabilitada. Contacta al administrador."), null,
+                            null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new LoginDTO(
-                            new RespuestaDTO(true, "500", "Error en el servidor. Intenta nuevamente."), null));
+                            new RespuestaDTO(true, "500", "Error en el servidor. Intenta nuevamente."), null, null));
         }
     }
 
@@ -75,18 +81,15 @@ public class AuthenticationController {
             this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Credenciales incorrectas"); // Relanzamos la excepción específica
+            throw new BadCredentialsException("Credenciales incorrectas"); 
         } catch (DisabledException e) {
-            throw new DisabledException("Cuenta deshabilitada"); // Relanzamos la excepción específica
+            throw new DisabledException("Cuenta deshabilitada"); 
         }
     }
-
 
     @PostMapping("/registrarNuevo")
     public ResponseEntity<RespuestaDTO> registrarUsuario(
             @Valid @RequestBody UsuarioDTO usuarioDTO, BindingResult result) {
-
-        // Validar si hay errores en los campos
         if (result.hasErrors()) {
             List<String> errores = result.getFieldErrors()
                     .stream()

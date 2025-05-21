@@ -35,7 +35,10 @@ public class SecurityConfig {
                 // Permitir acceso al login y registro sin autenticación
                 .requestMatchers("/login/**", "/registrarNuevo/**").permitAll()
 
+                .requestMatchers("/terceros/**").hasAnyAuthority("CLIENTE", "Superadmin", "Admin")
+
                 // El cliente solo puede actualizar sus datos
+                .requestMatchers(HttpMethod.GET, "/clientes/buscarClientePorUsuario/{nombreUsuario}**").hasAnyAuthority("CLIENTE", "Superadmin", "Admin")
                 .requestMatchers(HttpMethod.PUT, "/clientes/**").hasAnyAuthority("CLIENTE", "Superadmin", "Admin")
                 // Superadmin y Admin tienen acceso completo
                 .requestMatchers("/clientes/**").hasAnyAuthority("Superadmin", "Admin")
