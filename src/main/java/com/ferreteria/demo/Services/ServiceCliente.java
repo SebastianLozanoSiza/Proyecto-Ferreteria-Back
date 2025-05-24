@@ -5,7 +5,7 @@ import com.ferreteria.demo.DTO.Usuario.UsuarioDTO;
 
 public interface ServiceCliente {
     
-    ListarClienteDTO findAll();
+    ListarClienteDTO findAll(String identificacion, String nombre, String correo);
 
     ListarClienteDTO findByNombreUsuario(String nombreUsuario);
 

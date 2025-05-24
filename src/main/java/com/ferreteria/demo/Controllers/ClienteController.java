@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ferreteria.demo.DTO.RespuestaDTO;
@@ -31,9 +32,11 @@ public class ClienteController {
     private ServiceCliente serviceCliente;
 
     @GetMapping("/listarClientes")
-    public ResponseEntity<ListarClienteDTO> findAll() {
+    public ResponseEntity<ListarClienteDTO> findAll(@RequestParam(required = false) String identificacion,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String correo) {
         try {
-            ListarClienteDTO listarClienteDTO = serviceCliente.findAll();
+            ListarClienteDTO listarClienteDTO = serviceCliente.findAll(identificacion, nombre, correo);
             listarClienteDTO.setRespuesta(new RespuestaDTO(false, "200", "Clientes listados correctamente"));
             return new ResponseEntity<>(listarClienteDTO, HttpStatus.OK);
         } catch (DataAccessException e) {

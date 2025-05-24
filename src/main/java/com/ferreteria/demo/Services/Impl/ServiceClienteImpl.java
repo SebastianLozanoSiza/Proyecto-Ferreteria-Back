@@ -44,10 +44,31 @@ public class ServiceClienteImpl implements ServiceCliente {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public ListarClienteDTO findAll() {
+    public ListarClienteDTO findAll(String identificacion, String nombre, String correo) {
         Iterable<Cliente> clienteIterable = repositoryCliente.findAll();
         List<Cliente> clientes = StreamSupport.stream(clienteIterable.spliterator(), false)
                 .collect(Collectors.toList());
+
+        if (identificacion != null && !identificacion.isEmpty()) {
+            clientes = clientes.stream()
+                    .filter(cli -> cli.getTercero().getIdentificacion()
+                            .contains(identificacion))
+                    .collect(Collectors.toList());
+        }
+
+        if (nombre != null && !nombre.isEmpty()) {
+            clientes = clientes.stream()
+                    .filter(cli -> cli.getTercero().getNombre().toLowerCase()
+                            .contains(nombre.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (correo != null && !correo.isEmpty()) {
+            clientes = clientes.stream()
+                    .filter(cli -> cli.getTercero().getCorreo().toLowerCase()
+                            .contains(correo.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
 
         List<ClienteDTO> clienteDTO = clientes.stream().map(convert::convertToListarDTO)
                 .collect(Collectors.toList());
