@@ -35,43 +35,28 @@ public class SecurityConfig {
                 // Permitir acceso al login y registro sin autenticación
                 .requestMatchers("/login/**", "/registrarNuevo/**").permitAll()
 
-                .requestMatchers("/roles/**").hasAuthority("Superadmin")
+                .requestMatchers("/roles/**").hasAuthority("Admin")
+                .requestMatchers("/departamentos/**").hasAuthority("Admin")
 
-                .requestMatchers("/terceros/**").hasAnyAuthority("CLIENTE", "Superadmin", "Admin")
+                .requestMatchers("/terceros/**").hasAnyAuthority("CLIENTE", "Admin", "Supervisor")
 
                 // El cliente solo puede actualizar sus datos
-                .requestMatchers(HttpMethod.GET, "/clientes/buscarClientePorUsuario/{nombreUsuario}**").hasAnyAuthority("CLIENTE", "Superadmin", "Admin")
-                .requestMatchers(HttpMethod.PUT, "/clientes/**").hasAnyAuthority("CLIENTE", "Superadmin", "Admin")
-                // Superadmin y Admin tienen acceso completo
-                .requestMatchers("/clientes/**").hasAnyAuthority("Superadmin", "Admin")
-                .requestMatchers(HttpMethod.PUT, "/empleados/**").hasAnyAuthority("Superadmin", "Admin")
-                // Solo Superadmin pueden gestionar empleados
-                .requestMatchers("/empleados/**").hasAuthority("Superadmin")
+                .requestMatchers(HttpMethod.GET, "/clientes/buscarClientePorUsuario/{nombreUsuario}**")
+                .hasAnyAuthority("CLIENTE", "Admin", "Supervisor")
+                .requestMatchers(HttpMethod.PUT, "/clientes/**").hasAnyAuthority("CLIENTE", "Admin", "Supervisor")
+                // Admin tiene acceso completo
+                .requestMatchers("/clientes/**").hasAuthority("Admin")
+                .requestMatchers("/empleados/**").hasAuthority("Admin")
 
-                // Solo clientes pueden listar ferreterias
-                .requestMatchers(HttpMethod.GET, "/ferreterias/**")
-                .hasAnyAuthority("CLIENTE", "Admin", "Superadmin")
+                .requestMatchers("/ferreterias/**").hasAnyAuthority("Supervisor", "Admin")
 
-                // Solo Admins y Superadmin pueden crear, editar y eliminar ferreterias
-                .requestMatchers(HttpMethod.POST, "/ferreterias/**").hasAnyAuthority("Admin", "Superadmin")
-                .requestMatchers(HttpMethod.PUT, "/ferreterias/**").hasAnyAuthority("Admin", "Superadmin")
-                .requestMatchers(HttpMethod.DELETE, "/ferreterias/**").hasAnyAuthority("Admin", "Superadmin")
+                // Solo clientes y Supervisor pueden listar productos
+                .requestMatchers(HttpMethod.GET, "/productos/listarProductos").hasAnyAuthority("CLIENTE", "Admin", "Supervisor")
 
-                // Solo Admins y Superadmin pueden ver departamentos
-                .requestMatchers(HttpMethod.GET, "/departamentos/**").hasAnyAuthority("Admin", "Superadmin")
-
-                // Solo clientes y Superadmin pueden listar productos
-                .requestMatchers(HttpMethod.GET, "/productos/listarProductos")
-                .hasAnyAuthority("CLIENTE", "Superadmin")
-
-                // Solo Superadmin pueden crear, actualizar y eliminar productos
-                .requestMatchers(HttpMethod.POST, "/productos/**").hasAuthority("Superadmin")
-                .requestMatchers(HttpMethod.PUT, "/productos/**").hasAuthority("Superadmin")
-                .requestMatchers(HttpMethod.DELETE, "/productos/**").hasAuthority("Superadmin")
-
-                // Solo Superadmin pueden crear departamentos
-                .requestMatchers(HttpMethod.POST, "/departamentos/**").hasAuthority("Superadmin")
-
+                // Solo Admin pueden crear, actualizar y eliminar productos
+                .requestMatchers(HttpMethod.POST, "/productos/**").hasAnyAuthority("Admin", "Supervisor")
+                .requestMatchers(HttpMethod.PUT, "/productos/**").hasAnyAuthority("Admin", "Supervisor")
+                .requestMatchers(HttpMethod.DELETE, "/productos/**").hasAnyAuthority("Admin", "Supervisor")
                 // Permitir acceso a Swagger sin autenticación
                 .requestMatchers(SWAGGER_WHILELIST).permitAll()
                 // Bloquear cualquier otro acceso

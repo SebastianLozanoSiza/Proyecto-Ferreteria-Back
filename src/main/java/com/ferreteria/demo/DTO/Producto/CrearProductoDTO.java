@@ -17,7 +17,7 @@ public class CrearProductoDTO {
     private String descripcion;
 
     @NotBlank(message = "La categoría no puede estar vacía")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String categoria;
 
     @Column(nullable = false)

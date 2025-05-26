@@ -7,7 +7,7 @@ import com.ferreteria.demo.DTO.Empleado.ListarEmpleadoDTO;
 
 public interface ServiceEmpleado {
     
-    ListarEmpleadoDTO findAll();
+    ListarEmpleadoDTO findAll(String identificacion, String nombre, String correo, String rol, String ferreteria);
 
     CrearEmpleadoDTO save(CrearEmpleadoDTO crearEmpleadoDTO);
 

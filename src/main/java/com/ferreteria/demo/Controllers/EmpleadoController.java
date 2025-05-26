@@ -1,6 +1,7 @@
 package com.ferreteria.demo.Controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ferreteria.demo.DTO.RespuestaDTO;
@@ -36,9 +37,13 @@ public class EmpleadoController {
     private ServiceEmpleado serviceEmpleado;
 
     @GetMapping("/listarEmpleados")
-    public ResponseEntity<ListarEmpleadoDTO> findAll() {
+    public ResponseEntity<ListarEmpleadoDTO> findAll(@RequestParam(required = false) String identificacion,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String correo,
+            @RequestParam(required = false) String rol,
+            @RequestParam(required = false) String ferreteria) {
         try {
-            ListarEmpleadoDTO listarEmpleadoDTO = serviceEmpleado.findAll();
+            ListarEmpleadoDTO listarEmpleadoDTO = serviceEmpleado.findAll(identificacion, nombre, correo, rol, ferreteria);
             listarEmpleadoDTO.setRespuesta(new RespuestaDTO(false, "200", "Empleados listados correctamente"));
             return new ResponseEntity<>(listarEmpleadoDTO, HttpStatus.OK);
         } catch (DataAccessException e) {

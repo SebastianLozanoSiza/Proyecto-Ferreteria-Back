@@ -62,10 +62,46 @@ public class ServiceEmpleadoImpl implements ServiceEmpleado {
     private CredencialesDTOConverter credencialesDTOConverter;
 
     @Override
-    public ListarEmpleadoDTO findAll() {
+    public ListarEmpleadoDTO findAll(String identificacion, String nombre, String correo, String rol,
+            String ferreteria) {
         Iterable<Empleado> empleadoIterable = repositoryEmpleado.findAll();
         List<Empleado> empleados = StreamSupport.stream(empleadoIterable.spliterator(), false)
                 .collect(Collectors.toList());
+
+        if (identificacion != null && !identificacion.isEmpty()) {
+            empleados = empleados.stream()
+                    .filter(empl -> empl.getTercero().getIdentificacion()
+                            .contains(identificacion))
+                    .collect(Collectors.toList());
+        }
+
+        if (nombre != null && !nombre.isEmpty()) {
+            empleados = empleados.stream()
+                    .filter(empl -> empl.getTercero().getNombre()
+                            .contains(nombre))
+                    .collect(Collectors.toList());
+        }
+
+        if (correo != null && !correo.isEmpty()) {
+            empleados = empleados.stream()
+                    .filter(empl -> empl.getTercero().getCorreo()
+                            .contains(correo))
+                    .collect(Collectors.toList());
+        }
+
+        if (rol != null && !rol.isEmpty()) {
+            empleados = empleados.stream()
+                    .filter(empl -> empl.getRol().getNombreRol()
+                            .contains(rol))
+                    .collect(Collectors.toList());
+        }
+
+        if (ferreteria != null && !ferreteria.isEmpty()) {
+            empleados = empleados.stream()
+                    .filter(empl -> empl.getFerreteria().getRazonSocial()
+                            .contains(ferreteria))
+                    .collect(Collectors.toList());
+        }
 
         List<EmpleadoDTO> empleadoDTOs = empleados.stream().map(convert::convertToListarDTO)
                 .collect(Collectors.toList());

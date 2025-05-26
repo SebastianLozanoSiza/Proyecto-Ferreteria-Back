@@ -35,10 +35,10 @@ public class PermisosController {
         // CLIENTES
         ModuloPermisoDTO clientes = new ModuloPermisoDTO();
         clientes.setNombreModulo("Clientes");
-        clientes.setLeer(roles.contains("Superadmin") || roles.contains("Admin"));
-        clientes.setCrear(roles.contains("Superadmin") || roles.contains("Admin"));
-        clientes.setActualizar(roles.contains("Superadmin") || roles.contains("Admin") || roles.contains("CLIENTE"));
-        clientes.setEliminar(roles.contains("Superadmin") || roles.contains("Admin"));
+        clientes.setLeer(roles.contains("Admin"));
+        clientes.setCrear(roles.contains("Admin"));
+        clientes.setActualizar(roles.contains("Admin") || roles.contains("CLIENTE"));
+        clientes.setEliminar(roles.contains("Admin"));
         if (clientes.isLeer() || clientes.isCrear() || clientes.isActualizar() || clientes.isEliminar()) {
             modulos.add(clientes);
         }
@@ -46,10 +46,10 @@ public class PermisosController {
         // EMPLEADOS
         ModuloPermisoDTO empleados = new ModuloPermisoDTO();
         empleados.setNombreModulo("Empleados");
-        empleados.setLeer(roles.contains("Superadmin") || roles.contains("Admin"));
-        empleados.setCrear(roles.contains("Superadmin") || roles.contains("Admin"));
-        empleados.setActualizar(roles.contains("Superadmin") || roles.contains("Admin"));
-        empleados.setEliminar(roles.contains("Superadmin"));
+        empleados.setLeer(roles.contains("Admin"));
+        empleados.setCrear(roles.contains("Admin"));
+        empleados.setActualizar(roles.contains("Admin"));
+        empleados.setEliminar(roles.contains("Admin"));
         if (empleados.isLeer() || empleados.isCrear() || empleados.isActualizar() || empleados.isEliminar()) {
             modulos.add(empleados);
         }
@@ -57,10 +57,10 @@ public class PermisosController {
         // FERRETERIAS
         ModuloPermisoDTO ferreterias = new ModuloPermisoDTO();
         ferreterias.setNombreModulo("Ferreterias");
-        ferreterias.setLeer(roles.contains("Superadmin") || roles.contains("Admin") || roles.contains("CLIENTE"));
-        ferreterias.setCrear(roles.contains("Superadmin") || roles.contains("Admin"));
-        ferreterias.setActualizar(roles.contains("Superadmin") || roles.contains("Admin"));
-        ferreterias.setEliminar(roles.contains("Superadmin") || roles.contains("Admin"));
+        ferreterias.setLeer(roles.contains("Admin") || roles.contains("Supervisor"));
+        ferreterias.setCrear(roles.contains("Supervisor") || roles.contains("Admin"));
+        ferreterias.setActualizar(roles.contains("Supervisor") || roles.contains("Admin"));
+        ferreterias.setEliminar(roles.contains("Supervisor") || roles.contains("Admin"));
         if (ferreterias.isLeer() || ferreterias.isCrear() || ferreterias.isActualizar() || ferreterias.isEliminar()) {
             modulos.add(ferreterias);
         }
@@ -68,10 +68,10 @@ public class PermisosController {
         // DEPARTAMENTOS
         ModuloPermisoDTO departamentos = new ModuloPermisoDTO();
         departamentos.setNombreModulo("Departamentos");
-        departamentos.setLeer(roles.contains("Superadmin") || roles.contains("Admin"));
-        departamentos.setCrear(roles.contains("Superadmin"));
-        departamentos.setActualizar(roles.contains("Superadmin"));
-        departamentos.setEliminar(roles.contains("Superadmin"));
+        departamentos.setLeer(roles.contains("Admin"));
+        departamentos.setCrear(roles.contains("Admin"));
+        departamentos.setActualizar(roles.contains("Admin"));
+        departamentos.setEliminar(roles.contains("Admin"));
         if (departamentos.isLeer() || departamentos.isCrear() || departamentos.isActualizar()
                 || departamentos.isEliminar()) {
             modulos.add(departamentos);
@@ -80,12 +80,34 @@ public class PermisosController {
         // PRODUCTOS
         ModuloPermisoDTO productos = new ModuloPermisoDTO();
         productos.setNombreModulo("Productos");
-        productos.setLeer(roles.contains("Superadmin") || roles.contains("CLIENTE"));
-        productos.setCrear(roles.contains("Superadmin"));
-        productos.setActualizar(roles.contains("Superadmin"));
-        productos.setEliminar(roles.contains("Superadmin"));
+        productos.setLeer(roles.contains("Admin") || roles.contains("Supervisor") || roles.contains("CLIENTE"));
+        productos.setCrear(roles.contains("Admin") || roles.contains("Supervisor"));
+        productos.setActualizar(roles.contains("Admin") || roles.contains("Supervisor"));
+        productos.setEliminar(roles.contains("Admin") || roles.contains("Supervisor"));
         if (productos.isLeer() || productos.isCrear() || productos.isActualizar() || productos.isEliminar()) {
             modulos.add(productos);
+        }
+
+        // TERCEROS
+        ModuloPermisoDTO terceros = new ModuloPermisoDTO();
+        terceros.setNombreModulo("Terceros");
+        terceros.setLeer(roles.contains("Admin") || roles.contains("Supervisor") || roles.contains("CLIENTE"));
+        terceros.setCrear(roles.contains("Admin") || roles.contains("Supervisor") || roles.contains("CLIENTE"));
+        terceros.setActualizar(roles.contains("Admin") || roles.contains("Supervisor") || roles.contains("CLIENTE"));
+        terceros.setEliminar(roles.contains("Admin") || roles.contains("Supervisor") || roles.contains("CLIENTE"));
+        if (terceros.isLeer() || terceros.isCrear() || terceros.isActualizar() || terceros.isEliminar()) {
+            modulos.add(terceros);
+        }
+
+        // ROLES
+        ModuloPermisoDTO rolesModulo = new ModuloPermisoDTO();
+        rolesModulo.setNombreModulo("Roles");
+        rolesModulo.setLeer(roles.contains("Admin"));
+        rolesModulo.setCrear(roles.contains("Admin"));
+        rolesModulo.setActualizar(roles.contains("Admin"));
+        rolesModulo.setEliminar(roles.contains("Admin"));
+        if (rolesModulo.isLeer() || rolesModulo.isCrear() || rolesModulo.isActualizar() || rolesModulo.isEliminar()) {
+            modulos.add(rolesModulo);
         }
 
         respuesta.setRespuesta(new RespuestaDTO(false, "200", "Permisos listados correctamente"));
